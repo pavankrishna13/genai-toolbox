@@ -337,7 +337,7 @@ func RunVectorAssistApplySpecToolInvokeTest(t *testing.T, ctx context.Context, p
 func RunVectorAssistGenerateQueryToolInvokeTest(t *testing.T, ctx context.Context, pool *pgxpool.Pool, specID string) {
 	validPayload := fmt.Sprintf(`{
         "spec_id": "%s",
-        "query_text": "What is the capital of France?",
+        "search_text": "What is the capital of France?",
         "top_k": 5
     }`, specID)
 

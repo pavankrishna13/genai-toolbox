@@ -1,5 +1,5 @@
 ---
-title: "vector-assist-modify-spec"
+title: "vector-assist-modify-spec Tool"
 type: docs
 weight: 1
 description: >

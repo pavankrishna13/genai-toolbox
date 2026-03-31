@@ -1,5 +1,5 @@
 ---
-title: "vector-assist-apply-spec"
+title: "vector-assist-apply-spec Tool"
 type: docs
 weight: 1
 description: >
