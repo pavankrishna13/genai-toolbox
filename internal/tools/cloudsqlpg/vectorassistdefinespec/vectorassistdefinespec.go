@@ -83,17 +83,17 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 		parameters.NewStringParameterWithRequired("vector_column_name", "Column name for the column with vector embeddings.", false),
 		parameters.NewStringParameterWithRequired("text_column_name", "Column name for the column with text on which vector search needs to be set up.", false),
 		parameters.NewStringParameterWithRequired("vector_index_type", "Type of the vector index to be created (Allowed inputs: 'hnsw', 'ivfflat', 'scann').", false),
-		parameters.NewBooleanParameterWithRequired("embeddings_available", "Boolean paramter to know if vector embeddings are already available in the table.", false),
+		parameters.NewBooleanParameterWithRequired("embeddings_available", "Boolean parameter to know if vector embeddings are already available in the table.", false),
 		parameters.NewIntParameterWithRequired("num_vectors", "Number of vectors expected in the dataset.", false),
 		parameters.NewIntParameterWithRequired("dimensionality", "If vectors are already generated, set to dimension of vectors. If not, set to dimensionality of the embedding_model.", false),
 		parameters.NewStringParameterWithRequired("embedding_model", "Optional parameter: Model to be used for generating embeddings.", false),
-		parameters.NewArrayParameterWithRequired("prefilter_column_names", "Columns based on which prefiltering will happen in vector search queries..", false, parameters.NewStringParameter("prefilter_column_name", "Pre filter column name")),
+		parameters.NewArrayParameterWithRequired("prefilter_column_names", "Columns based on which prefiltering will happen in vector search queries.", false, parameters.NewStringParameter("prefilter_column_name", "Pre filter column name")),
 		parameters.NewStringParameterWithRequired("distance_func", "Distance function to be used for comparing vectors (Allowed inputs: 'cosine', 'ip', 'l2', 'l1').", false),
 		parameters.NewStringParameterWithRequired("quantization", "Quantization to be used for creating the vector indexes (Allowed inputs: 'none', 'halfvec', 'bit').", false),
 		parameters.NewIntParameterWithRequired("memory_budget_kb", "Maximum size in KB that the index can consume in memory while building.", false),
 		parameters.NewFloatParameterWithRequired("target_recall", "The recall that the user would like to target with the given index for standard vector queries.", false),
 		parameters.NewIntParameterWithRequired("target_top_k", "The top-K values that need to be retrieved for the given query.", false),
-		parameters.NewBooleanParameterWithRequired("tune_vector_index", "Boolean paramter to specify if the auto tuning is required for the index.", false),
+		parameters.NewBooleanParameterWithRequired("tune_vector_index", "Boolean parameter to specify if the auto tuning is required for the index.", false),
 	}
 	paramManifest := allParameters.Manifest()
 

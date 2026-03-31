@@ -70,10 +70,10 @@ func (cfg Config) ToolConfigType() string {
 
 func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
 	allParameters := parameters.Parameters{
-		parameters.NewStringParameterWithRequired("spec_id", "Generate the vector query corresponding to this vector spec.", false),
-		parameters.NewStringParameterWithRequired("table_name", "Generate the vector query corresponding to this table (in case of a single spec defined on the table).", false),
-		parameters.NewStringParameterWithRequired("column_name", "text_column_name or vector_column_name of the spec to identify the exact spec in case there are multiple specs defined on a table.", false),
-		parameters.NewStringParameterWithRequired("schema_name", "text_column_name or vector_column_name of the spec to identify the exact spec in case there are multiple specs defined on a table.", false),
+		parameters.NewStringParameterWithRequired("spec_id", "The unique ID of the vector specification to apply.", false),
+		parameters.NewStringParameterWithRequired("table_name", "The name of the table to apply the vector specification to (in case of a single spec defined on the table).", false),
+		parameters.NewStringParameterWithRequired("column_name", "The text_column_name or vector_column_name of the spec to identify the exact spec in case there are multiple specs defined on a table.", false),
+		parameters.NewStringParameterWithRequired("schema_name", "The schema name for the table.", false),
 	}
 	paramManifest := allParameters.Manifest()
 
