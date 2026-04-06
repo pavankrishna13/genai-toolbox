@@ -10,7 +10,7 @@ description: >
 
 ## About
 
-The `vector-assist-modify-spec` tool modifies an existing vector specification (identified by a required `spec_id`) with new parameters or overrides. Upon modification, it automatically recalculates and refreshes the list of generated SQL recommendations to match the updated requirements. 
+The `vector-assist-modify-spec` tool modifies an existing vector specification (identified by a required `spec_id`) with new parameters or overrides. Upon modification, it automatically recalculates and refreshes the list of generated recommendations by `vector_assist.define-spec` to match the updated spec requirements. 
 
 Use this tool when a user or agent wants to adjust or fine-tune the configuration of an already defined vector spec (such as changing the target recall, embedding model, or quantization) before actually executing the setup commands. Under the hood, this tool connects to the target database and executes the `vector_assist.modify_spec` function to generate the updated specifications.
 

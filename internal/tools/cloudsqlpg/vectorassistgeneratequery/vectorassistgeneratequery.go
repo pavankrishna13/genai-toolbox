@@ -25,6 +25,7 @@ import (
 	"github.com/googleapis/genai-toolbox/internal/tools"
 	"github.com/googleapis/genai-toolbox/internal/util"
 	"github.com/googleapis/genai-toolbox/internal/util/parameters"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -32,14 +33,14 @@ const resourceType string = "vector-assist-generate-query"
 
 const generateQueryStatement = `
     SELECT vector_assist.generate_query(
-        spec_id => $1::TEXT, table_name => $2::TEXT,
-        schema_name => $3::TEXT, column_name => $4::TEXT,
-        search_text => $5::TEXT, search_vector => $6::vector,
-        output_column_names => $7,
-		top_k => $8::INTEGER,
-		filter_expressions => $9,
-        target_recall => $10::FLOAT,
-        iterative_index_search => $11::BOOLEAN
+        spec_id => @spec_id::TEXT, table_name => @table_name::TEXT,
+        schema_name => @schema_name::TEXT, column_name => @column_name::TEXT,
+        search_text => @search_text::TEXT, search_vector => @search_vector::vector,
+        output_column_names => @output_column_names,
+        top_k => @top_k::INTEGER,
+        filter_expressions => @filter_expressions,
+        target_recall => @target_recall::FLOAT,
+        iterative_index_search => @iterative_index_search::BOOLEAN
       );
 `
 
@@ -77,6 +78,7 @@ func (cfg Config) ToolConfigType() string {
 }
 
 func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
+	// parameters are marked required/ optional based on the vector assist function defintions
 	allParameters := parameters.Parameters{
 		parameters.NewStringParameterWithRequired("spec_id", "Generate the vector query corresponding to this vector spec.", false),
 		parameters.NewStringParameterWithRequired("table_name", "Generate the vector query corresponding to this table (in case of a single spec defined on the table).", false),
@@ -129,13 +131,15 @@ func (t Tool) Invoke(ctx context.Context, resourceMgr tools.SourceProvider, para
 		return nil, util.NewClientServerError("source used is not compatible with the tool", http.StatusInternalServerError, err)
 	}
 	paramsMap := params.AsMap()
-
-	newParams, err := parameters.GetParams(t.allParams, paramsMap)
-	if err != nil {
-		return nil, util.NewAgentError("unable to extract standard params", err)
+	
+	// Convert our parsed parameters directly into pgx.NamedArgs
+	namedArgs := pgx.NamedArgs{}
+	for key, value := range paramsMap {
+		namedArgs[key] = value
 	}
-	sliceParams := newParams.AsSlice()
-	resp, err := source.RunSQL(ctx, generateQueryStatement, sliceParams)
+
+	// As long as source.RunSQL unwraps args into pgx.Query(ctx, sql, args...), pgx handles the mapping of @param to the named parameter.
+	resp, err := source.RunSQL(ctx, generateQueryStatement, []any{namedArgs})
 	if err != nil {
 		return nil, util.ProcessGeneralError(err)
 	}

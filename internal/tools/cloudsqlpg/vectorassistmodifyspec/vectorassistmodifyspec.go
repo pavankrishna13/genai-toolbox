@@ -25,6 +25,7 @@ import (
 	"github.com/googleapis/genai-toolbox/internal/tools"
 	"github.com/googleapis/genai-toolbox/internal/util"
 	"github.com/googleapis/genai-toolbox/internal/util/parameters"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -32,14 +33,14 @@ const resourceType string = "vector-assist-modify-spec"
 
 const modifySpecQuery = `
     SELECT recommendation_id, vector_spec_id, table_name, schema_name, query, recommendation, applied, modified, created_at 
-	FROM vector_assist.modify_spec(spec_id => $1::TEXT, table_name => $2::TEXT, schema_name => $3::TEXT, 
-		vector_column_name => $4::TEXT, text_column_name => $5::TEXT, 
-		vector_index_type => $6::TEXT, embeddings_available => $7::BOOLEAN,
-		num_vectors => $8::INTEGER, dimensionality => $9::INTEGER, 
-		embedding_model => $10::TEXT, prefilter_column_names => $11, 
-		distance_func => $12::TEXT, quantization => $13::TEXT, 
-		memory_budget_kb => $14::INTEGER, target_recall => $15::FLOAT, 
-		target_top_k => $16::INTEGER, tune_vector_index => $17::BOOLEAN);
+    FROM vector_assist.modify_spec(spec_id => @spec_id::TEXT, table_name => @table_name::TEXT, schema_name => @schema_name::TEXT, 
+        vector_column_name => @vector_column_name::TEXT, text_column_name => @text_column_name::TEXT, 
+        vector_index_type => @vector_index_type::TEXT, embeddings_available => @embeddings_available::BOOLEAN,
+        num_vectors => @num_vectors::INTEGER, dimensionality => @dimensionality::INTEGER, 
+        embedding_model => @embedding_model::TEXT, prefilter_column_names => @prefilter_column_names, 
+        distance_func => @distance_func::TEXT, quantization => @quantization::TEXT, 
+        memory_budget_kb => @memory_budget_kb::INTEGER, target_recall => @target_recall::FLOAT, 
+        target_top_k => @target_top_k::INTEGER, tune_vector_index => @tune_vector_index::BOOLEAN);
 `
 
 func init() {
@@ -76,6 +77,7 @@ func (cfg Config) ToolConfigType() string {
 }
 
 func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
+	// parameters are marked required/ optional based on the vector assist function defintions
 	allParameters := parameters.Parameters{
 		parameters.NewStringParameterWithRequired("spec_id", "Unique ID for the vector spec you want to modify.", true),
 		parameters.NewStringParameterWithRequired("table_name", "Modify the table name on which vector workload needs to be set up.", false),
@@ -135,12 +137,14 @@ func (t Tool) Invoke(ctx context.Context, resourceMgr tools.SourceProvider, para
 	}
 	paramsMap := params.AsMap()
 
-	newParams, err := parameters.GetParams(t.allParams, paramsMap)
-	if err != nil {
-		return nil, util.NewAgentError("unable to extract standard params", err)
+	// Convert our parsed parameters directly into pgx.NamedArgs
+	namedArgs := pgx.NamedArgs{}
+	for key, value := range paramsMap {
+		namedArgs[key] = value
 	}
-	sliceParams := newParams.AsSlice()
-	resp, err := source.RunSQL(ctx, modifySpecQuery, sliceParams)
+
+	// As long as source.RunSQL unwraps args into pgx.Query(ctx, sql, args...), pgx handles the mapping of @param to the named parameter.
+	resp, err := source.RunSQL(ctx, modifySpecQuery, []any{namedArgs})
 	if err != nil {
 		return nil, util.ProcessGeneralError(err)
 	}

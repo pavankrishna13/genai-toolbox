@@ -25,14 +25,15 @@ import (
 	"github.com/googleapis/genai-toolbox/internal/tools"
 	"github.com/googleapis/genai-toolbox/internal/util"
 	"github.com/googleapis/genai-toolbox/internal/util/parameters"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const resourceType string = "vector-assist-apply-spec"
 
 const applySpecQuery = `
-    SELECT * FROM vector_assist.apply_spec(spec_id => $1, table_name => $2, 
-	column_name => $3, schema_name => $4);
+    SELECT * FROM vector_assist.apply_spec(spec_id => @spec_id::TEXT, table_name => @table_name::TEXT, 
+    column_name => @column_name::TEXT, schema_name => @schema_name::TEXT);
 `
 
 func init() {
@@ -69,6 +70,7 @@ func (cfg Config) ToolConfigType() string {
 }
 
 func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
+	// parameters are marked required/ optional based on the vector assist function defintions
 	allParameters := parameters.Parameters{
 		parameters.NewStringParameterWithRequired("spec_id", "The unique ID of the vector specification to apply.", false),
 		parameters.NewStringParameterWithRequired("table_name", "The name of the table to apply the vector specification to (in case of a single spec defined on the table).", false),
@@ -115,12 +117,14 @@ func (t Tool) Invoke(ctx context.Context, resourceMgr tools.SourceProvider, para
 	}
 	paramsMap := params.AsMap()
 
-	newParams, err := parameters.GetParams(t.allParams, paramsMap)
-	if err != nil {
-		return nil, util.NewAgentError("unable to extract standard params", err)
+	// Convert our parsed parameters directly into pgx.NamedArgs
+	namedArgs := pgx.NamedArgs{}
+	for key, value := range paramsMap {
+		namedArgs[key] = value
 	}
-	sliceParams := newParams.AsSlice()
-	resp, err := source.RunSQL(ctx, applySpecQuery, sliceParams)
+
+	// As long as source.RunSQL unwraps args into pgx.Query(ctx, sql, args...), pgx handles the mapping of @param to the named parameter.
+	resp, err := source.RunSQL(ctx, applySpecQuery, []any{namedArgs})
 	if err != nil {
 		return nil, util.ProcessGeneralError(err)
 	}
