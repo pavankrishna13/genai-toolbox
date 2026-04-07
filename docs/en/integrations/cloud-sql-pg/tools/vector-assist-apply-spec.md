@@ -24,16 +24,6 @@ Use this tool when the user has reviewed the generated recommendations from a de
 Ensure that your target PostgreSQL database has the required `vector_assist` extension installed, in order for this tool to execute successfully.
 {{< /notice >}}
 
-## Example
-
-```yaml
-kind: tool
-name: apply_spec
-type: vector-assist-apply-spec
-source: my-database-source
-description: "This tool automatically executes all the SQL recommendations associated with a specific vector specification (spec_id) or table. It runs the necessary commands in the correct sequence to provision the workload, marking each step as applied once successful. Use this tool when the user has reviewed the generated recommendations from a defined (or modified) spec and is ready to apply the changes directly to their database instance to finalize the vector search setup."
-```
-
 ## Parameters
 
 The tool takes the following input parameters:
@@ -49,6 +39,16 @@ The tool takes the following input parameters:
 > Parameters are marked as required or optional based on the vector assist function definitions. 
 > The function may perform further validation on optional parameters to ensure all necessary 
 > data is available before returning a response.
+
+## Example
+
+```yaml
+kind: tool
+name: apply_spec
+type: vector-assist-apply-spec
+source: my-database-source
+description: "This tool automatically executes all the SQL recommendations associated with a specific vector specification (spec_id) or table. It runs the necessary commands in the correct sequence to provision the workload, marking each step as applied once successful. Use this tool when the user has reviewed the generated recommendations from a defined (or modified) spec and is ready to apply the changes directly to their database instance to finalize the vector search setup."
+```
 
 ## Reference
 

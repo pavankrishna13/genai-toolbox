@@ -23,16 +23,6 @@ The tool contextually understands requirements such as distance functions, quant
 Ensure that your target PostgreSQL database has the required `vector_assist` extension installed, in order for this tool to execute successfully.
 {{< /notice >}}
 
-## Example
-
-```yaml
-kind: tool
-name: generate_query
-type: vector-assist-generate-query
-source: my-database-source
-description: "This tool generates optimized SQL queries for vector search by leveraging the metadata and vector specifications defined in a specific spec_id. It may return a single query or a sequence of multiple SQL queries that can be executed sequentially. Use this tool when a user wants to perform semantic or similarity searches on their data. It serves as the primary actionable tool to invoke for generating the executable SQL required to retrieve relevant results based on vector similarity."
-```
-
 ## Parameters
 
 The tool takes the following input parameters:
@@ -55,6 +45,16 @@ The tool takes the following input parameters:
 > Parameters are marked as required or optional based on the vector assist function definitions. 
 > The function may perform further validation on optional parameters to ensure all necessary 
 > data is available before returning a response.
+
+## Example
+
+```yaml
+kind: tool
+name: generate_query
+type: vector-assist-generate-query
+source: my-database-source
+description: "This tool generates optimized SQL queries for vector search by leveraging the metadata and vector specifications defined in a specific spec_id. It may return a single query or a sequence of multiple SQL queries that can be executed sequentially. Use this tool when a user wants to perform semantic or similarity searches on their data. It serves as the primary actionable tool to invoke for generating the executable SQL required to retrieve relevant results based on vector similarity."
+```
 
 ## Reference
 

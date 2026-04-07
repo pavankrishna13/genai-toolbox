@@ -25,16 +25,6 @@ Use this tool at the very beginning of the vector setup process when an agent or
 Ensure that your target PostgreSQL database has the required `vector_assist` extension installed, in order for this tool to execute successfully.
 {{< /notice >}}
 
-## Example
-
-```yaml
-kind: tool
-name: define_spec
-type: vector-assist-define-spec
-source: my-database-source
-description: "This tool defines a new vector specification by capturing the user's intent and requirements for a vector search workload. This generates a complete, ordered set of SQL recommendations required to set up the database, embeddings, and vector indexes. Use this tool at the very beginning of the vector setup process when a user first wants to configure a table for vector search, generate embeddings, or create a new vector index."
-```
-
 ## Parameters
 
 The tool takes the following input parameters:
@@ -63,6 +53,16 @@ The tool takes the following input parameters:
 > Parameters are marked as required or optional based on the vector assist function definitions. 
 > The function may perform further validation on optional parameters to ensure all necessary 
 > data is available before returning a response.
+
+## Example
+
+```yaml
+kind: tool
+name: define_spec
+type: vector-assist-define-spec
+source: my-database-source
+description: "This tool defines a new vector specification by capturing the user's intent and requirements for a vector search workload. This generates a complete, ordered set of SQL recommendations required to set up the database, embeddings, and vector indexes. Use this tool at the very beginning of the vector setup process when a user first wants to configure a table for vector search, generate embeddings, or create a new vector index."
+```
 
 ## Reference
 
