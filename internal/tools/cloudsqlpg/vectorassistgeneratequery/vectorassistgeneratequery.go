@@ -131,7 +131,7 @@ func (t Tool) Invoke(ctx context.Context, resourceMgr tools.SourceProvider, para
 		return nil, util.NewClientServerError("source used is not compatible with the tool", http.StatusInternalServerError, err)
 	}
 	paramsMap := params.AsMap()
-	
+
 	// Convert our parsed parameters directly into pgx.NamedArgs
 	namedArgs := pgx.NamedArgs{}
 	for key, value := range paramsMap {

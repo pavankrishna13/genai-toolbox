@@ -95,12 +95,14 @@ func setupVectorAssistTable(t *testing.T, ctx context.Context, pool *pgxpool.Poo
 	return tableName, teardown, dropExtensionFunc
 }
 
+// TODO: Remove the test from this file and follow the existing test pattern 
+// by calling the tests from cloudsqlpg_integration_test.go
 func TestVectorAssistIntegration(t *testing.T) {
 	sourceConfig := getCloudSQLPgVars(t)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	var args []string
+	args := []string{"--enable-api"}
 
 	pool, err := initCloudSQLPgConnectionPool(CloudSQLPostgresProject, CloudSQLPostgresRegion, CloudSQLPostgresInstance, "public", CloudSQLPostgresUser, CloudSQLPostgresPass, CloudSQLPostgresDatabase)
 	if err != nil {
@@ -118,7 +120,6 @@ func TestVectorAssistIntegration(t *testing.T) {
 	//Create table names using the UUID
 	tableNameParam := "param_table_" + uniqueID
 	tableNameAuth := "auth_table_" + uniqueID
-	tableNameTemplateParam := "template_param_table_" + uniqueID
 
 	// set up data for param tool
 	createParamTableStmt, insertParamTableStmt, paramToolStmt, idParamToolStmt, nameParamToolStmt, arrayToolStmt, paramTestParams := tests.GetPostgresSQLParamToolInfo(tableNameParam)
@@ -158,16 +159,6 @@ func TestVectorAssistIntegration(t *testing.T) {
 		t.Logf("toolbox command logs: \n%s", out)
 		t.Fatalf("toolbox didn't start successfully: %s", err)
 	}
-
-	// Get configs for tests
-	select1Want, mcpMyFailToolWant, createTableStatement, mcpSelect1Want := tests.GetPostgresWants()
-
-	// Run tests
-	tests.RunToolGetTest(t)
-	tests.RunToolInvokeTest(t, select1Want)
-	tests.RunMCPToolCallMethod(t, mcpMyFailToolWant, mcpSelect1Want)
-	tests.RunExecuteSqlToolInvokeTest(t, createTableStatement, select1Want)
-	tests.RunToolInvokeWithTemplateParameters(t, tableNameTemplateParam)
 
 	// Run vectorassist tool tests
 	specID := "va_spec_001"
