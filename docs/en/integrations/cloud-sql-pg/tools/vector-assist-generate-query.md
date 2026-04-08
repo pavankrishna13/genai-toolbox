@@ -1,5 +1,5 @@
 ---
-title: "Vector Assist Generate Query Tool"
+title: "vector-assist-generate-query Tool"
 type: docs
 weight: 1
 description: >
