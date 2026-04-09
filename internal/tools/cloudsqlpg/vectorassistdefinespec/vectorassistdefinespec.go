@@ -88,7 +88,7 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 		parameters.NewBooleanParameterWithRequired("embeddings_available", "Boolean parameter to know if vector embeddings are already available in the table.", false),
 		parameters.NewIntParameterWithRequired("num_vectors", "Number of vectors expected in the dataset.", false),
 		parameters.NewIntParameterWithRequired("dimensionality", "If vectors are already generated, set to dimension of vectors. If not, set to dimensionality of the embedding_model.", false),
-		parameters.NewStringParameterWithRequired("embedding_model", "Optional parameter: Model to be used for generating embeddings.", false),
+		parameters.NewStringParameterWithRequired("embedding_model", "Optional parameter: Model to be used for generating embeddings. If not provided, it has an internally selected default value.", false),
 		parameters.NewArrayParameterWithRequired("prefilter_column_names", "Columns based on which prefiltering will happen in vector search queries.", false, parameters.NewStringParameter("prefilter_column_name", "Pre filter column name")),
 		parameters.NewStringParameterWithRequired("distance_func", "Distance function to be used for comparing vectors (Allowed inputs: 'cosine', 'ip', 'l2', 'l1').", false),
 		parameters.NewStringParameterWithRequired("quantization", "Quantization to be used for creating the vector indexes (Allowed inputs: 'none', 'halfvec', 'bit').", false),
@@ -100,7 +100,7 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 	paramManifest := allParameters.Manifest()
 
 	if cfg.Description == "" {
-		cfg.Description = "This tool defines a new vector specification by capturing the user's intent and requirements for a vector search workload. This generates a complete, ordered set of SQL recommendations required to set up the database, embeddings, and vector indexes. Use this tool at the very beginning of the vector setup process when a user first wants to configure a table for vector search, generate embeddings, or create a new vector index."
+		cfg.Description = "This tool defines a new vector specification by capturing the user's intent and requirements for a vector search workload. This generates a complete, ordered set of SQL recommendations required to set up the database, embeddings, and vector indexes. While highly customizable, any optional parameters left unspecified will use internally determined defaults optimized for the specific workload. Use this tool at the very beginning of the vector setup process when a user first wants to configure a table for vector search, generate embeddings, or create a new vector index."
 	}
 
 	mcpManifest := tools.GetMcpManifest(cfg.Name, cfg.Description, cfg.AuthRequired, allParameters, nil)

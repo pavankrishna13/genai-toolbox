@@ -100,7 +100,7 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 	paramManifest := allParameters.Manifest()
 
 	if cfg.Description == "" {
-		cfg.Description = "This tool modifies an existing vector specification (identified by a required spec_id) with new parameters or overrides. Upon modification, it automatically recalculates and refreshes the list of generated SQL recommendations to match the updated requirements. Use this tool when a user wants to adjust or fine-tune the configuration of an already defined vector spec (such as changing the target recall, embedding model, or quantization) before actually executing the setup commands."
+		cfg.Description = "This tool modifies an existing vector specification (identified by a required spec_id) with new parameters or overrides. Upon modification, it automatically recalculates and refreshes the list of generated SQL recommendations to match the updated requirements. This tool provides a way to modify column(s) in the vector spec before applying and taking action on the recommendations. While highly customizable, any optional parameters left unspecified will use internally determined defaults optimized for the specific workload. Use this tool to modify configurations established via 'define_spec' tool such as adjusting target recall, embedding models, or quantization settings, etc."
 	}
 
 	mcpManifest := tools.GetMcpManifest(cfg.Name, cfg.Description, cfg.AuthRequired, allParameters, nil)
