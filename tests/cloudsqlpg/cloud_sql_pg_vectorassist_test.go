@@ -95,7 +95,7 @@ func setupVectorAssistTable(t *testing.T, ctx context.Context, pool *pgxpool.Poo
 	return tableName, teardown, dropExtensionFunc
 }
 
-// TODO: Remove the test from this file and follow the existing test pattern 
+// TODO: Remove the test from this file and follow the existing test pattern
 // by calling the tests from cloudsqlpg_integration_test.go
 func TestVectorAssistIntegration(t *testing.T) {
 	sourceConfig := getCloudSQLPgVars(t)
