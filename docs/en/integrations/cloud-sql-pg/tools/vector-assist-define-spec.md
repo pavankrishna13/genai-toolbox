@@ -1,5 +1,5 @@
 ---
-title: "vector-assist-define-spec Tool"
+title: "vector-assist-define-spec"
 type: docs
 weight: 1
 description: >
